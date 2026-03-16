@@ -1,0 +1,6 @@
+{
+  "rules": [
+    "Only answer based on approved policy data.",
+    "Do not invent enrollment policies."
+  ]
+}
