@@ -1,3 +1,5 @@
+import "./globals.css";
+
 export const metadata = {
   title: "CunyZeroLite",
   description: "Team project starter",
