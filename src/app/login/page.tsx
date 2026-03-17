@@ -20,9 +20,7 @@ export default function LoginPage() {
       [name]: value,
     }));
 
-    if (errorMessage) {
-      setErrorMessage("");
-    }
+    if (errorMessage) setErrorMessage("");
   }
 
   function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
@@ -52,104 +50,106 @@ export default function LoginPage() {
 
     setTimeout(() => {
       setIsLoggingIn(false);
-      // later replace with router.push("/dashboard")
     }, 2200);
   }
 
   return (
     <main className="h-screen overflow-hidden bg-white">
       <div
-        className={`grid h-screen lg:grid-cols-[1.08fr_0.92fr] transition-all duration-300 ${
+        className={`grid h-screen lg:grid-cols-[0.95fr_1.05fr] xl:grid-cols-[1.02fr_0.98fr] transition-all duration-300 ${
           isLoggingIn ? "scale-[0.99] blur-[2px]" : ""
         }`}
       >
         <section className="hidden h-screen lg:flex bg-blue-950 text-white">
-          <div className="flex w-full items-center justify-center px-10 py-8 xl:px-14 xl:py-10">
-            <div className="w-full max-w-[760px]">
-              <div className="max-w-[620px]">
-                <p className="text-sm font-semibold uppercase tracking-[0.35em] text-blue-200">
-                  Student Portal
-                </p>
-                <h2 className="mt-3 text-4xl font-bold tracking-tight text-white xl:text-5xl">
-                  CunyZeroLite
-                </h2>
+          <div className="flex w-full items-center justify-center px-8 py-8 xl:px-12 xl:py-10 2xl:px-14">
+            <div className="w-full max-w-[540px] xl:max-w-[620px]">
+              <p className="text-xs xl:text-sm font-semibold uppercase tracking-[0.32em] text-blue-200">
+                Student Portal
+              </p>
 
-                <div className="mt-10">
-                  <p className="text-sm uppercase tracking-[0.35em] text-blue-200">
-                    Student access
-                  </p>
-                  <h1 className="mt-3 text-5xl font-bold leading-[1.05] xl:text-6xl">
-                    Welcome back to your academic dashboard.
-                  </h1>
-                  <p className="mt-4 text-lg leading-8 text-blue-100/95">
-                    Access enrollment tools, manage your student experience, and
-                    stay connected through a reliable academic portal designed
-                    for clarity and ease of use.
-                  </p>
+              <h2 className="mt-3 text-3xl xl:text-4xl 2xl:text-5xl font-bold tracking-tight text-white">
+                CunyZeroLite
+              </h2>
+
+              <div className="mt-8 xl:mt-10">
+                <p className="text-[11px] xl:text-sm uppercase tracking-[0.32em] text-blue-200">
+                  Student access
+                </p>
+
+                <h1 className="mt-3 text-[52px] leading-[0.98] font-bold tracking-tight text-white xl:text-6xl 2xl:text-7xl">
+                  Welcome back to your academic dashboard.
+                </h1>
+
+                <p className="mt-4 max-w-[520px] text-[15px] leading-7 text-blue-100/95 xl:text-lg xl:leading-8">
+                  Access enrollment tools, manage your student experience, and
+                  stay connected through a reliable academic portal designed for
+                  clarity and ease of use.
+                </p>
+              </div>
+
+              <div className="group relative mt-6 xl:mt-8 rounded-3xl border border-white/10 bg-white/10 p-4 xl:p-5 shadow-lg backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:bg-white/[0.13] hover:shadow-2xl">
+                <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                  <div className="absolute -inset-px rounded-3xl border border-blue-300/25" />
+                  <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-300/8 via-transparent to-white/5" />
                 </div>
 
-                <div className="group relative mt-8 rounded-3xl border border-white/10 bg-white/10 p-5 shadow-lg backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:bg-white/[0.13] hover:shadow-2xl">
-                  <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                    <div className="absolute -inset-px rounded-3xl border border-blue-300/25" />
-                    <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-300/8 via-transparent to-white/5" />
+                <div className="relative flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[10px] xl:text-xs font-semibold uppercase tracking-[0.24em] xl:tracking-[0.28em] text-blue-200">
+                      Academic Dashboard Overview
+                    </p>
+
+                    <h3 className="mt-2 text-xl xl:text-2xl font-bold text-white">
+                      Example Student Snapshot
+                    </h3>
+
+                    <p className="mt-2 max-w-md text-[13px] leading-5 xl:text-sm xl:leading-6 text-blue-100/90">
+                      View the type of academic information available once you
+                      sign in, including enrollment status, registration
+                      details, course load, and important account alerts.
+                    </p>
                   </div>
 
-                  <div className="relative flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-200">
-                        Academic Dashboard Overview
-                      </p>
-                      <h3 className="mt-2 text-2xl font-bold text-white">
-                        Example Student Snapshot
-                      </h3>
-                      <p className="mt-2 max-w-md text-sm leading-6 text-blue-100/90">
-                        View the type of academic information available once you
-                        sign in, including enrollment status, registration
-                        details, course load, and important account alerts.
-                      </p>
-                    </div>
+                  <div className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs xl:text-sm font-medium text-blue-100 transition-all duration-300 group-hover:bg-white/15">
+                    Active
+                  </div>
+                </div>
 
-                    <div className="rounded-full border border-white/15 bg-white/10 px-3 py-1 text-sm font-medium text-blue-100 transition-all duration-300 group-hover:bg-white/15">
-                      Active
-                    </div>
+                <div className="relative mt-4 grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl bg-white/8 p-3 transition-all duration-300 group-hover:bg-white/10">
+                    <p className="text-[10px] xl:text-[11px] uppercase tracking-[0.18em] xl:tracking-[0.22em] text-blue-200">
+                      Current Term
+                    </p>
+                    <p className="mt-2 text-sm xl:text-base font-semibold text-white">
+                      Spring 2026
+                    </p>
                   </div>
 
-                  <div className="relative mt-5 grid grid-cols-2 gap-3">
-                    <div className="rounded-2xl bg-white/8 p-3.5 transition-all duration-300 group-hover:bg-white/10">
-                      <p className="text-[11px] uppercase tracking-[0.22em] text-blue-200">
-                        Current Term
-                      </p>
-                      <p className="mt-2 text-base font-semibold text-white">
-                        Spring 2026
-                      </p>
-                    </div>
+                  <div className="rounded-2xl bg-white/8 p-3 transition-all duration-300 group-hover:bg-white/10">
+                    <p className="text-[10px] xl:text-[11px] uppercase tracking-[0.18em] xl:tracking-[0.22em] text-blue-200">
+                      Enrollment Status
+                    </p>
+                    <p className="mt-2 text-sm xl:text-base font-semibold text-white">
+                      Registered
+                    </p>
+                  </div>
 
-                    <div className="rounded-2xl bg-white/8 p-3.5 transition-all duration-300 group-hover:bg-white/10">
-                      <p className="text-[11px] uppercase tracking-[0.22em] text-blue-200">
-                        Enrollment Status
-                      </p>
-                      <p className="mt-2 text-base font-semibold text-white">
-                        Registered
-                      </p>
-                    </div>
+                  <div className="rounded-2xl bg-white/8 p-3 transition-all duration-300 group-hover:bg-white/10">
+                    <p className="text-[10px] xl:text-[11px] uppercase tracking-[0.18em] xl:tracking-[0.22em] text-blue-200">
+                      Credit Load
+                    </p>
+                    <p className="mt-2 text-sm xl:text-base font-semibold text-white">
+                      15 Credits
+                    </p>
+                  </div>
 
-                    <div className="rounded-2xl bg-white/8 p-3.5 transition-all duration-300 group-hover:bg-white/10">
-                      <p className="text-[11px] uppercase tracking-[0.22em] text-blue-200">
-                        Credit Load
-                      </p>
-                      <p className="mt-2 text-base font-semibold text-white">
-                        15 Credits
-                      </p>
-                    </div>
-
-                    <div className="rounded-2xl bg-white/8 p-3.5 transition-all duration-300 group-hover:bg-white/10">
-                      <p className="text-[11px] uppercase tracking-[0.22em] text-blue-200">
-                        Account Holds
-                      </p>
-                      <p className="mt-2 text-base font-semibold text-white">
-                        None
-                      </p>
-                    </div>
+                  <div className="rounded-2xl bg-white/8 p-3 transition-all duration-300 group-hover:bg-white/10">
+                    <p className="text-[10px] xl:text-[11px] uppercase tracking-[0.18em] xl:tracking-[0.22em] text-blue-200">
+                      Account Holds
+                    </p>
+                    <p className="mt-2 text-sm xl:text-base font-semibold text-white">
+                      None
+                    </p>
                   </div>
                 </div>
               </div>
@@ -157,8 +157,8 @@ export default function LoginPage() {
           </div>
         </section>
 
-        <section className="flex h-screen items-center justify-center bg-slate-100 px-6 py-8 sm:px-8 lg:px-10 xl:px-14">
-          <div className="w-full max-w-[560px]">
+        <section className="flex h-screen items-center justify-center bg-slate-100 px-6 py-8 sm:px-8 lg:px-8 xl:px-10 2xl:px-14">
+          <div className="w-full max-w-[520px] xl:max-w-[560px]">
             <div className="rounded-[28px] border border-slate-200 bg-white p-8 shadow-[0_28px_90px_rgba(15,23,42,0.16)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_36px_110px_rgba(15,23,42,0.22)] sm:p-10">
               <div className="mb-8">
                 <div className="mb-5 lg:hidden">
