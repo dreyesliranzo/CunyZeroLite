@@ -54,29 +54,21 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="h-screen overflow-hidden bg-white">
+    <main className="min-h-screen bg-white">
       <div
-        className={`grid h-screen lg:grid-cols-[0.95fr_1.05fr] xl:grid-cols-[1.02fr_0.98fr] transition-all duration-300 ${
+        className={`grid min-h-screen lg:grid-cols-[0.95fr_1.05fr] xl:grid-cols-[1.02fr_0.98fr] transition-all duration-300 ${
           isLoggingIn ? "scale-[0.99] blur-[2px]" : ""
         }`}
       >
-        <section className="hidden h-screen lg:flex bg-blue-950 text-white">
-          <div className="flex w-full items-center justify-center px-8 py-8 xl:px-12 xl:py-10 2xl:px-14">
+        <section className="hidden lg:flex bg-blue-950 text-white">
+          <div className="flex w-full justify-center px-8 pt-4 pb-8 xl:px-12 xl:pt-6 xl:pb-10 2xl:px-14">
             <div className="w-full max-w-[540px] xl:max-w-[620px]">
-              <p className="text-xs xl:text-sm font-semibold uppercase tracking-[0.32em] text-blue-200">
-                Student Portal
-              </p>
-
-              <h2 className="mt-3 text-3xl xl:text-4xl 2xl:text-5xl font-bold tracking-tight text-white">
-                CunyZeroLite
-              </h2>
-
               <div className="mt-8 xl:mt-10">
                 <p className="text-[11px] xl:text-sm uppercase tracking-[0.32em] text-blue-200">
                   Student access
                 </p>
 
-                <h1 className="mt-3 text-[52px] leading-[0.98] font-bold tracking-tight text-white xl:text-6xl 2xl:text-7xl">
+                <h1 className="mt-2 text-[52px] leading-[0.98] font-bold tracking-tight text-white xl:text-6xl 2xl:text-7xl">
                   Welcome back to your academic dashboard.
                 </h1>
 
@@ -157,7 +149,7 @@ export default function LoginPage() {
           </div>
         </section>
 
-        <section className="flex h-screen items-center justify-center bg-slate-100 px-6 py-8 sm:px-8 lg:px-8 xl:px-10 2xl:px-14">
+        <section className="flex min-h-screen items-center justify-center bg-slate-100 px-6 py-8 sm:px-8 lg:px-8 xl:px-10 2xl:px-14">
           <div className="w-full max-w-[520px] xl:max-w-[560px]">
             <div className="rounded-[28px] border border-slate-200 bg-white p-8 shadow-[0_28px_90px_rgba(15,23,42,0.16)] transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.01] hover:shadow-[0_36px_110px_rgba(15,23,42,0.22)] sm:p-10">
               <div className="mb-8">
