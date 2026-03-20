@@ -1,7 +1,9 @@
 "use client";
 
+import { navigate } from "next/dist/client/components/segment-cache/navigation";
 import Link from "next/link";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -11,6 +13,8 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const router = useRouter();
+
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -52,6 +56,18 @@ export default function LoginPage() {
       setIsLoggingIn(false);
     }, 2200);
   }
+
+  // just relies on isLoggingIn for now.
+  useEffect(()=>{
+    if(isLoggingIn == true){
+      router.push('Dashboard')
+    }
+  }, [isLoggingIn])
+
+
+  
+
+
 
   return (
     <main className="min-h-screen bg-white">
