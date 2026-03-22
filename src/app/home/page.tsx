@@ -1,4 +1,5 @@
 import Link from "next/link";
+import HomeChatWidget from "@/src/components/HomeChatWidget";
 
 const infoCards = [
   {
@@ -381,6 +382,8 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+
+      <HomeChatWidget />
     </main>
   );
 }
