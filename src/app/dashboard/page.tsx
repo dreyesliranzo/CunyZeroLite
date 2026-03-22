@@ -29,43 +29,63 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-3 gap-6 max-[1080px]:grid-cols-2 max-md:grid-cols-1">
 
-            <article className="flex min-h-[210px] flex-col items-center rounded-[26px] border border-white/35 bg-white/95 px-[18px] pb-4 pt-[18px] text-center shadow-[0_8px_18px_rgba(6,24,52,0.12)]">
-              <h3 className="mb-4 w-full border-b-2 border-[#c7d3e6] pb-3 text-[1.08rem] font-extrabold">Profile</h3>
-              <div className="my-1.5 grid h-[92px] w-[92px] place-items-center">
-                
-              </div>
-              <p className="mt-auto text-[0.98rem] font-bold">
-                <span className="font-semibold">ID GOES HERE</span> 
-              </p>
-            </article>
+            <Link
+              href={'/profile'}
+            >
+              <article className="flex min-h-[210px] flex-col items-center rounded-[26px] border border-white/35 bg-white/95 px-[18px] pb-4 pt-[18px] text-center shadow-[0_8px_18px_rgba(6,24,52,0.12)]">
+                <h3 className="mb-4 w-full border-b-2 border-[#c7d3e6] pb-3 text-[1.08rem] font-extrabold">Profile</h3>
+                <div className="my-1.5 grid h-[92px] w-[92px] place-items-center">
+                  {/**ICON GOES HERE */}
+                </div>
+                <p className="mt-auto text-[0.98rem] font-bold">
+                  <span className="font-semibold">ID GOES HERE</span> 
+                </p>
+              </article>
+            </Link>
 
-            <article className="flex min-h-[210px] flex-col items-center rounded-[26px] border border-white/35 bg-white/95 px-[18px] pb-4 pt-[18px] text-center shadow-[0_8px_18px_rgba(6,24,52,0.12)]">
-              <h3 className="mb-4 w-full border-b-2 border-[#c7d3e6] pb-3 text-[1.08rem] font-extrabold">Student Tools</h3>
-              <div className="my-1.5 grid h-[92px] w-[92px] place-items-center">
-                
-              </div>
-              <p className="mt-auto text-[0.98rem] font-bold">Quick Access Resources</p>
-            </article>
+            <Link
+              href={'/student_tools'}
+            >
+              <article className="flex min-h-[210px] flex-col items-center rounded-[26px] border border-white/35 bg-white/95 px-[18px] pb-4 pt-[18px] text-center shadow-[0_8px_18px_rgba(6,24,52,0.12)]">
+                <h3 className="mb-4 w-full border-b-2 border-[#c7d3e6] pb-3 text-[1.08rem] font-extrabold">Student Tools</h3>
+                <div className="my-1.5 grid h-[92px] w-[92px] place-items-center">
+                  {/**ICON GOES HERE */}
+                </div>
+                <p className="mt-auto text-[0.98rem] font-bold">Quick Access Resources</p>
+              </article>
+            </Link>
 
-            <article className="flex min-h-[210px] flex-col items-center rounded-[26px] border border-white/35 bg-white/95 px-[18px] pb-4 pt-[18px] text-center shadow-[0_8px_18px_rgba(6,24,52,0.12)]">
-              <h3 className="mb-4 w-full border-b-2 border-[#c7d3e6] pb-3 text-[1.08rem] font-extrabold">Schedule Builder</h3>
-              
-              <p className="mt-auto text-[0.98rem] font-bold">Plan Your Classes</p>
-            </article>
+            <Link
+              href={'/schedule_builder'}
+            >
+              <article className="flex min-h-[210px] flex-col items-center rounded-[26px] border border-white/35 bg-white/95 px-[18px] pb-4 pt-[18px] text-center shadow-[0_8px_18px_rgba(6,24,52,0.12)]">
+                <h3 className="mb-4 w-full border-b-2 border-[#c7d3e6] pb-3 text-[1.08rem] font-extrabold">Schedule Builder</h3>
+                    {/**ICON GOES HERE */}
+                <p className="mt-auto text-[0.98rem] font-bold">Plan Your Classes</p>
+              </article>
+            </Link>
 
-            <article className="flex min-h-[210px] flex-col items-center rounded-[26px] border border-white/35 bg-white/95 px-[18px] pb-4 pt-[18px] text-center shadow-[0_8px_18px_rgba(6,24,52,0.12)]">
-              <h3 className="mb-4 w-full border-b-2 border-[#c7d3e6] pb-3 text-[1.08rem] font-extrabold">Course Planning</h3>
-              
-              <p className="mt-auto text-[0.98rem] font-bold">
-                <span className="font-extrabold text-[#e53b3b]">1</span> Active Appointment
-              </p>
-            </article>
+            <Link
+              href={'/course_planning'}
+            >
+              <article className="flex min-h-[210px] flex-col items-center rounded-[26px] border border-white/35 bg-white/95 px-[18px] pb-4 pt-[18px] text-center shadow-[0_8px_18px_rgba(6,24,52,0.12)]">
+                <h3 className="mb-4 w-full border-b-2 border-[#c7d3e6] pb-3 text-[1.08rem] font-extrabold">Course Planning</h3>
+                    {/**ICON GOES HERE */}
+                <p className="mt-auto text-[0.98rem] font-bold">
+                  <span className="font-extrabold text-[#e53b3b]">1</span> Active Appointment
+                </p>
+              </article>
+            </Link>
 
-            <article className="flex min-h-[210px] flex-col items-center rounded-[26px] border border-white/35 bg-white/95 px-[18px] pb-4 pt-[18px] text-center shadow-[0_8px_18px_rgba(6,24,52,0.12)]">
-              <h3 className="mb-4 w-full border-b-2 border-[#c7d3e6] pb-3 text-[1.08rem] font-extrabold">Grades & Transcript</h3>
-              
-              <p className="mt-auto text-[0.98rem] font-bold">Request Current Grades</p>
-            </article>
+            <Link 
+              href={'/grades_transcript'}
+            >
+              <article className="flex min-h-[210px] flex-col items-center rounded-[26px] border border-white/35 bg-white/95 px-[18px] pb-4 pt-[18px] text-center shadow-[0_8px_18px_rgba(6,24,52,0.12)]">
+                <h3 className="mb-4 w-full border-b-2 border-[#c7d3e6] pb-3 text-[1.08rem] font-extrabold">Grades & Transcript</h3>
+                  {/**ICON GOES HERE */}
+                <p className="mt-auto text-[0.98rem] font-bold">Request Current Grades</p>
+              </article>
+            </Link>
 
 
           </div>

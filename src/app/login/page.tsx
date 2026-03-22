@@ -60,7 +60,7 @@ export default function LoginPage() {
   // just relies on isLoggingIn for now.
   useEffect(()=>{
     if(isLoggingIn == true){
-      router.push('Dashboard')
+      router.push('dashboard')
     }
   }, [isLoggingIn])
 
