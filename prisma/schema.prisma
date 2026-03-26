@@ -5,11 +5,220 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = env("DATABASE_URL")
 }
 
-model Student {
+// ─── UNIFIED USER MODEL ────────────────────────────────────────────
+// role: "REGISTRAR" | "INSTRUCTOR" | "STUDENT" | "VISITOR"
+model User {
   id        Int      @id @default(autoincrement())
+  email     String   @unique
   username  String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      String   @default("VISITOR")
+  gpa       Float    @default(0.0)
+  warnings  Int      @default(0)
+  suspended Boolean  @default(false)
+  terminated Boolean @default(false)         // student: GPA < 2.0 or failed same course twice
+  fired     Boolean  @default(false)         // instructor: fired by registrar
+  graduated Boolean  @default(false)
+  fineOwed  Float    @default(0.0)           // fine owed when suspended
+  mustChangePassword Boolean @default(true)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations as instructor
+  taughtCourses   Course[]     @relation("InstructorCourses")
+
+  // Relations as student
+  enrollments     Enrollment[]
+  waitlists       Waitlist[]
+  reviewsAuthored Review[]     @relation("ReviewAuthor")
+
+  // Complaints
+  complaintsFiled    Complaint[] @relation("ComplaintFiler")
+  complaintsReceived Complaint[] @relation("ComplaintTarget")
+
+  // Warnings log
+  warningsReceived Warning[]
+
+  // Applications
+  applications Application[]
+
+  // Graduation requests
+  graduationRequests GraduationRequest[]
+
+  // Honor roll
+  honorRollEntries HonorRoll[]
+}
+
+// ─── SEMESTER ──────────────────────────────────────────────────────
+// period: "CLASS_SETUP" | "REGISTRATION" | "RUNNING" | "GRADING" | "COMPLETED"
+model Semester {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  year      Int
+  term      String
+  period    String   @default("CLASS_SETUP")
+  startDate DateTime
+  endDate   DateTime
+  isCurrent    Boolean  @default(false)
+  programQuota Int      @default(50)          // max students the program accepts
+  createdAt    DateTime @default(now())
+
+  courses    Course[]
+  honorRolls HonorRoll[]
+}
+
+// ─── COURSE ────────────────────────────────────────────────────────
+model Course {
+  id          Int      @id @default(autoincrement())
+  code        String
+  name        String
+  credits     Int      @default(3)
+  maxStudents Int      @default(30)
+  schedule    String
+  cancelled   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  semesterId   Int
+  semester     Semester @relation(fields: [semesterId], references: [id])
+
+  instructorId Int?
+  instructor   User?    @relation("InstructorCourses", fields: [instructorId], references: [id])
+
+  enrollments Enrollment[]
+  waitlists   Waitlist[]
+  reviews     Review[]
+
+  @@unique([code, semesterId])
+}
+
+// ─── ENROLLMENT ────────────────────────────────────────────────────
+// status: "ENROLLED" | "DROPPED" | "COMPLETED"
+// grade: null | "A" | "B" | "C" | "D" | "F"
+model Enrollment {
+  id        Int      @id @default(autoincrement())
+  status    String   @default("ENROLLED")
+  grade     String?
+  createdAt DateTime @default(now())
+
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
+
+  courseId  Int
+  course   Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+// ─── WAITLIST ──────────────────────────────────────────────────────
+// status: "WAITING" | "ADMITTED" | "EXPIRED"
+model Waitlist {
+  id        Int      @id @default(autoincrement())
+  status    String   @default("WAITING")
+  position  Int
+  createdAt DateTime @default(now())
+
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
+
+  courseId  Int
+  course   Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId])
+}
+
+// ─── REVIEW ────────────────────────────────────────────────────────
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  hidden    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  authorId Int
+  author   User   @relation("ReviewAuthor", fields: [authorId], references: [id])
+
+  courseId  Int
+  course   Course @relation(fields: [courseId], references: [id])
+
+  @@unique([authorId, courseId])
+}
+
+// ─── COMPLAINT ─────────────────────────────────────────────────────
+// status: "PENDING" | "RESOLVED_WARNING" | "RESOLVED_DISMISSED"
+model Complaint {
+  id          Int      @id @default(autoincrement())
+  description String
+  status      String   @default("PENDING")
+  resolution  String?
+  createdAt   DateTime @default(now())
+
+  filerId  Int
+  filer    User @relation("ComplaintFiler", fields: [filerId], references: [id])
+
+  targetId Int
+  target   User @relation("ComplaintTarget", fields: [targetId], references: [id])
+}
+
+// ─── WARNING ───────────────────────────────────────────────────────
+model Warning {
+  id        Int      @id @default(autoincrement())
+  reason    String
+  removed   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+
+// ─── APPLICATION ───────────────────────────────────────────────────
+// type: "STUDENT" | "INSTRUCTOR"
+// status: "PENDING" | "ACCEPTED" | "REJECTED"
+model Application {
+  id            Int      @id @default(autoincrement())
+  type          String
+  status        String   @default("PENDING")
+  priorGpa      Float?
+  justification String?
+  createdAt     DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+
+// ─── GRADUATION REQUEST ────────────────────────────────────────────
+// status: "PENDING" | "APPROVED" | "REJECTED"
+model GraduationRequest {
+  id        Int      @id @default(autoincrement())
+  status    String   @default("PENDING")
+  createdAt DateTime @default(now())
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+
+// ─── TABOO WORD ────────────────────────────────────────────────────
+model TabooWord {
+  id   Int    @id @default(autoincrement())
+  word String @unique
+}
+
+// ─── HONOR ROLL ────────────────────────────────────────────────────
+// type: "SEMESTER" | "OVERALL"
+model HonorRoll {
+  id        Int      @id @default(autoincrement())
+  type      String
+  usedToRemoveWarning Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+
+  semesterId Int
+  semester   Semester @relation(fields: [semesterId], references: [id])
+
+  @@unique([userId, semesterId, type])
 }
