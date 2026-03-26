@@ -1,6 +1,69 @@
 {
-  "rules": [
-    "Only answer based on approved policy data.",
-    "Do not invent enrollment policies."
+  "system_instructions": "You are Lite, a helpful college assistant for CunyZeroLite. Answer questions about college policies, academics, registration, and student life based on the knowledge below. Be friendly, clear, and concise. If you don't know something, say so honestly.",
+  "policies": [
+    {
+      "topic": "Grading Scale",
+      "info": "The grading scale is: A (4.0), A- (3.7), B+ (3.3), B (3.0), B- (2.7), C+ (2.3), C (2.0), C- (1.7), D+ (1.3), D (1.0), F (0.0). A grade of D means you passed the course with minimal performance but it may not count toward your major requirements. A grade of F means you failed and must retake the course."
+    },
+    {
+      "topic": "GPA Requirements",
+      "info": "Students must maintain a minimum cumulative GPA of 2.0 to remain in good academic standing. A GPA below 2.0 results in academic probation. Students on probation who fail to raise their GPA may face suspension. A GPA of 3.5 or higher qualifies for the Dean's List. A GPA of 3.8 or higher qualifies for the President's List."
+    },
+    {
+      "topic": "Academic Probation and Suspension",
+      "info": "Students whose cumulative GPA falls below 2.0 are placed on academic probation and receive a warning. Accumulating 3 warnings may lead to suspension. Suspended students cannot register for courses until their suspension is lifted. Terminated students have been permanently removed from the program."
+    },
+    {
+      "topic": "Registration",
+      "info": "Students can register for courses during the registration period of each semester. The maximum course load is typically 5-6 courses (15-18 credits) per semester. Students must meet prerequisites before enrolling in advanced courses. Registration is first-come, first-served. If a course is full, students can join the waitlist."
+    },
+    {
+      "topic": "Waitlist",
+      "info": "When a course is full, students are placed on a waitlist in order of request. If a spot opens up, the first student on the waitlist is automatically enrolled. Students can check their waitlist position through the portal."
+    },
+    {
+      "topic": "Course Drop and Withdrawal",
+      "info": "Students can drop a course within the first two weeks of the semester with no record on their transcript. After the drop deadline, students may withdraw with a W grade, which does not affect GPA but appears on the transcript. Dropping below full-time status may affect financial aid."
+    },
+    {
+      "topic": "Financial Holds and Fines",
+      "info": "Students with outstanding fines or fees may have a financial hold placed on their account. Financial holds prevent registration, transcript requests, and graduation processing. Students must pay all outstanding balances to have holds removed."
+    },
+    {
+      "topic": "Graduation Requirements",
+      "info": "To graduate, students must complete all required courses for their program, maintain a minimum cumulative GPA of 2.0, have no outstanding financial holds, and submit a graduation application. Graduation applications are reviewed by the registrar."
+    },
+    {
+      "topic": "Honor Roll",
+      "info": "Students with a semester GPA of 3.5 or higher are placed on the semester honor roll. Students with a cumulative GPA of 3.5 or higher are placed on the overall honor roll. Honor roll status can be used to remove one academic warning."
+    },
+    {
+      "topic": "Course Reviews",
+      "info": "Students can leave anonymous reviews for courses they have completed. Reviews include a rating (1-5 stars) and an optional comment. Reviews containing inappropriate language (taboo words) are automatically hidden. Instructors with an average rating below 2.0 may receive a warning."
+    },
+    {
+      "topic": "Complaints",
+      "info": "Students can file complaints against instructors or other students. Complaints are reviewed by the registrar. The registrar may resolve complaints by issuing warnings, taking corrective action, or dismissing the complaint."
+    },
+    {
+      "topic": "Student Roles",
+      "info": "There are four roles in the system: Registrar (manages the institution), Instructor (teaches courses), Student (enrolled learner), and Visitor (prospective student who can browse courses and apply for admission)."
+    },
+    {
+      "topic": "Visitor and Admission",
+      "info": "Visitors can browse available courses and submit an application for admission. Applications require a justification and prior GPA. The registrar reviews and approves or denies applications. Approved visitors become students."
+    },
+    {
+      "topic": "Semester Periods",
+      "info": "Each semester goes through phases: REGISTRATION (students can enroll), ONGOING (classes in session), GRADING (instructors submit grades), and COMPLETED (semester is done). The registrar controls the current semester period."
+    },
+    {
+      "topic": "Instructor Responsibilities",
+      "info": "Instructors are assigned to courses and are responsible for submitting grades at the end of the semester. Instructors who have a course cancelled or receive consistently low reviews may receive warnings. Instructors with 3 warnings may be fired."
+    },
+    {
+      "topic": "How to Log In",
+      "info": "To log in, use your university email as your username (format: firstinitial + lastname + 00@cuny.edu, e.g., jsmith00@cuny.edu) and your assigned password. If you forgot your password, contact the registrar for a reset. First-time users may be required to change their password on first login."
+    }
   ]
 }
