@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { loginUser } from "./actions";
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -11,6 +13,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const router = useRouter();
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -23,7 +26,7 @@ export default function LoginPage() {
     if (errorMessage) setErrorMessage("");
   }
 
-  function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
     e.preventDefault();
     setErrorMessage("");
 
@@ -32,25 +35,18 @@ export default function LoginPage() {
       return;
     }
 
-    const validUsername = "student@cuny.edu";
-    const validPassword = "password123";
-
-    const isValidLogin =
-      formData.username.trim().toLowerCase() === validUsername &&
-      formData.password === validPassword;
-
-    if (!isValidLogin) {
-      setErrorMessage(
-        "Username or password is incorrect. Please check again or reset your password."
-      );
-      return;
-    }
-
     setIsLoggingIn(true);
 
-    setTimeout(() => {
+    // LOGIC: Calling the server action
+    const result = await loginUser(formData.username, formData.password);
+
+    if (result.success && result.role) {
+      // ROLE-BASED ROUTING: Redirects to /student/dashboard, /admin/dashboard, etc.
+      router.push(`/${result.role.toLowerCase()}/dashboard`);
+    } else {
+      setErrorMessage(result.error || "Login failed.");
       setIsLoggingIn(false);
-    }, 2200);
+    }
   }
 
   return (
@@ -236,9 +232,10 @@ export default function LoginPage() {
 
                 <button
                   type="submit"
+                  disabled={isLoggingIn}
                   className="w-full rounded-2xl bg-blue-900 px-4 py-3.5 font-semibold text-white shadow-md transition-all duration-300 ease-out hover:-translate-y-0.5 hover:bg-blue-800 hover:shadow-lg active:translate-y-0"
                 >
-                  Sign In
+                  {isLoggingIn ? "Signing in..." : "Sign In"}
                 </button>
               </form>
 
