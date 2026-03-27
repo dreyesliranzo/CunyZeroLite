@@ -30,17 +30,19 @@ export default function LoginPage() {
   }
 
   // 3. Our Login Logic (Integrated with friend's router)
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setErrorMessage("");
+ const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault(); // Prevents the page from refreshing
+  setIsLoading(true);
 
-    // Simulate Auth (You'll replace this with your actual login action later)
-    setTimeout(() => {
-      setIsLoading(false);
-      // Example: router.push('/dashboard'); 
-    }, 2000);
-  };
+  // 1. You can add a small delay here to show off your "Authenticating" animation
+  setTimeout(() => {
+    setIsLoading(false);
+    
+    // 2. This is the magic line that moves the user to the dashboard
+    // It looks for the 'src/app/dashboard/page.tsx' file
+    router.push('/dashboard'); 
+  }, 1500); 
+};
 
   return (
     <main className="min-h-screen bg-[#e2e8f0] text-[#0f172a] font-sans selection:bg-blue-100 relative overflow-hidden">
