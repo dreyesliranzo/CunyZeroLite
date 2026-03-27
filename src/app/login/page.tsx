@@ -1,17 +1,45 @@
 "use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { GraduationCap, Lock, Mail, ChevronRight, ShieldCheck, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { 
+  GraduationCap, 
+  Lock, 
+  Mail, 
+  ChevronRight, 
+  ShieldCheck, 
+  ArrowLeft 
+} from "lucide-react";
 
 export default function LoginPage() {
+  // 1. Combined Logic: Friend's form state + Our loading state
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  // 2. Friend's Change Handler
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  // 3. Our Login Logic (Integrated with friend's router)
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulating authentication delay
-    setTimeout(() => setIsLoading(false), 2000);
+    setErrorMessage("");
+
+    // Simulate Auth (You'll replace this with your actual login action later)
+    setTimeout(() => {
+      setIsLoading(false);
+      // Example: router.push('/dashboard'); 
+    }, 2000);
   };
 
   return (
@@ -21,7 +49,7 @@ export default function LoginPage() {
       <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.4]" 
            style={{ backgroundImage: `radial-gradient(#94a3b8 1px, transparent 1px)`, backgroundSize: '32px 32px' }} />
 
-      {/* Header */}
+      {/* Header (Same as before) */}
       <header className="relative z-10 bg-[#0f172a] text-white shadow-xl border-b border-white/5">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-6">
           <div className="flex items-center gap-4">
@@ -43,6 +71,7 @@ export default function LoginPage() {
       <section className="relative z-10 flex items-center justify-center px-8 py-20">
         <div className="max-w-[1000px] w-full grid lg:grid-cols-[1fr_450px] gap-8 items-stretch">
           
+          {/* Left Panel: The Skyline Image (Kept exactly as is) */}
           <div className="relative hidden lg:flex flex-col justify-end p-12 rounded-[2.5rem] overflow-hidden shadow-2xl border border-slate-300">
             <Image src="/image-cuny3.jpg" alt="CUNY Skyline" fill sizes="(max-width: 1024px) 0vw, 50vw" className="object-cover" />
             <div className="absolute inset-0 bg-[#0f172a]/70 backdrop-blur-[2px]" />
@@ -53,6 +82,7 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* Right Side: The White Login Card (Integrated Friend's Inputs) */}
           <div className="relative group">
             <div className="absolute -inset-1 rounded-[2.5rem] bg-blue-600/20 blur-2xl opacity-50 transition-opacity" />
             <div className="relative rounded-[2.5rem] bg-white border border-slate-300 p-10 text-slate-900 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.15)]">
@@ -62,12 +92,24 @@ export default function LoginPage() {
                 <p className="text-xs font-bold text-slate-400 mt-2 uppercase tracking-widest">Authorized Access Only</p>
               </div>
 
+              {errorMessage && (
+                <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-600 text-xs font-bold rounded-xl uppercase tracking-widest">
+                  {errorMessage}
+                </div>
+              )}
+
               <form onSubmit={handleLogin} className="space-y-6">
                 <div>
                   <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2 ml-1">Email Address</label>
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input type="email" required placeholder="username@cuny.edu"
+                    <input 
+                      type="email" 
+                      name="username" // Matches friend's state key
+                      value={formData.username}
+                      onChange={handleChange}
+                      required 
+                      placeholder="username@cuny.edu"
                       className="w-full rounded-2xl bg-slate-100 border border-slate-200 py-4 pl-12 pr-4 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all shadow-sm"
                     />
                   </div>
@@ -77,7 +119,13 @@ export default function LoginPage() {
                   <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2 ml-1">Secure Password</label>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                    <input type="password" required placeholder="••••••••"
+                    <input 
+                      type="password" 
+                      name="password" // Matches friend's state key
+                      value={formData.password}
+                      onChange={handleChange}
+                      required 
+                      placeholder="••••••••"
                       className="w-full rounded-2xl bg-slate-100 border border-slate-200 py-4 pl-12 pr-4 text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all shadow-sm"
                     />
                   </div>
@@ -87,7 +135,11 @@ export default function LoginPage() {
                   <Link href="/forgot" className="text-[10px] font-black uppercase tracking-widest text-blue-700 hover:text-blue-900">Forgot Credentials?</Link>
                 </div>
 
-                <button disabled={isLoading} className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 py-5 text-xs font-black uppercase tracking-[0.2em] text-white shadow-xl shadow-blue-600/20 hover:bg-blue-500 hover:-translate-y-1 active:translate-y-0 transition-all disabled:opacity-70 disabled:translate-y-0">
+                <button 
+                  type="submit"
+                  disabled={isLoading} 
+                  className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 py-5 text-xs font-black uppercase tracking-[0.2em] text-white shadow-xl shadow-blue-600/20 hover:bg-blue-500 hover:-translate-y-1 active:translate-y-0 transition-all disabled:opacity-70 disabled:translate-y-0"
+                >
                   {isLoading ? (
                     <span className="flex items-center gap-2">
                       <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
