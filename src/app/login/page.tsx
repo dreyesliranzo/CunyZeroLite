@@ -29,20 +29,23 @@ export default function LoginPage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
-  // 3. Our Login Logic (Integrated with friend's router)
- const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault(); // Prevents the page from refreshing
-  setIsLoading(true);
+  // 3. Login logic — calls server action and redirects by role
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setErrorMessage("");
 
-  // 1. You can add a small delay here to show off your "Authenticating" animation
-  setTimeout(() => {
-    setIsLoading(false);
-    
-    // 2. This is the magic line that moves the user to the dashboard
-    // It looks for the 'src/app/dashboard/page.tsx' file
-    router.push('/dashboard'); 
-  }, 1500); 
-};
+    const { loginUser } = await import("./actions");
+    const result = await loginUser(formData.username, formData.password);
+
+    if (!result.success) {
+      setErrorMessage(result.error || "Login failed.");
+      setIsLoading(false);
+      return;
+    }
+
+    router.push(result.redirect || "/dashboard");
+  };
 
   return (
     <main className="min-h-screen bg-[#e2e8f0] text-[#0f172a] font-sans selection:bg-blue-100 relative overflow-hidden">
