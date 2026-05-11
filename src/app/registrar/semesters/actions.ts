@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/src/lib/db";
 import { getSession } from "@/src/lib/session";
 import type { ActionResult, Period } from "./periods";
+import { evaluateRunningPeriod } from "./runningRules";
 
 const NEXT_PERIOD: Record<Period, Period | null> = {
   CLASS_SETUP: "REGISTRATION",
@@ -42,16 +43,39 @@ export async function advancePeriod(formData: FormData): Promise<ActionResult> {
     return { success: false, error: "Semester is already completed." };
   }
 
-  await prisma.semester.update({
-    where: { id },
-    data: {
-      period: next,
-      ...(next === "COMPLETED" ? { isCurrent: false } : {}),
-    },
+  // Wrap the period flip + UC-17 enforcement in one transaction so the
+  // semester never ends up in RUNNING with un-enforced rules.
+  const summary = await prisma.$transaction(async (tx) => {
+    await tx.semester.update({
+      where: { id },
+      data: {
+        period: next,
+        ...(next === "COMPLETED" ? { isCurrent: false } : {}),
+      },
+    });
+    if (next === "RUNNING") {
+      return evaluateRunningPeriod(tx, id);
+    }
+    return null;
   });
 
   revalidatePath("/registrar/semesters");
   revalidatePath("/registrar/dashboard");
+  revalidatePath("/registrar/courses");
+
+  if (summary) {
+    const parts = [
+      summary.cancelledCourses > 0 && `${summary.cancelledCourses} course${summary.cancelledCourses !== 1 ? "s" : ""} cancelled`,
+      summary.warnedInstructors > 0 && `${summary.warnedInstructors} instructor warning${summary.warnedInstructors !== 1 ? "s" : ""}`,
+      summary.suspendedInstructors > 0 && `${summary.suspendedInstructors} instructor${summary.suspendedInstructors !== 1 ? "s" : ""} suspended`,
+      summary.warnedStudents > 0 && `${summary.warnedStudents} student warning${summary.warnedStudents !== 1 ? "s" : ""}`,
+    ].filter(Boolean) as string[];
+    return {
+      success: true,
+      ok: parts.length > 0 ? `Now RUNNING. ${parts.join(", ")}.` : "Now RUNNING. No changes triggered.",
+    };
+  }
+
   return { success: true };
 }
 
