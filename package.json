@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "embed": "tsx scripts/embed-policies.ts"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.5.0",

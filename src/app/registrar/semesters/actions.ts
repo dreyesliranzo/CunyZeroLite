@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/src/lib/db";
 import { getSession } from "@/src/lib/session";
 import type { ActionResult, Period } from "./periods";
+import { evaluateGradingPeriod } from "./gradingEvaluation";
 
 const NEXT_PERIOD: Record<Period, Period | null> = {
   CLASS_SETUP: "REGISTRATION",
@@ -42,16 +43,43 @@ export async function advancePeriod(formData: FormData): Promise<ActionResult> {
     return { success: false, error: "Semester is already completed." };
   }
 
-  await prisma.semester.update({
-    where: { id },
-    data: {
-      period: next,
-      ...(next === "COMPLETED" ? { isCurrent: false } : {}),
-    },
+  // Wrap the period flip + UC-9 academic evaluation in one transaction so
+  // the period and the downstream effects either all land or all roll back.
+  const summary = await prisma.$transaction(async (tx) => {
+    await tx.semester.update({
+      where: { id },
+      data: {
+        period: next,
+        ...(next === "COMPLETED" ? { isCurrent: false } : {}),
+      },
+    });
+    if (next === "COMPLETED") {
+      return evaluateGradingPeriod(tx, id);
+    }
+    return null;
   });
 
   revalidatePath("/registrar/semesters");
   revalidatePath("/registrar/dashboard");
+  revalidatePath("/registrar/courses");
+
+  if (summary) {
+    const parts = [
+      summary.studentsGraded > 0 && `${summary.studentsGraded} student${summary.studentsGraded !== 1 ? "s" : ""} evaluated`,
+      summary.terminations > 0 && `${summary.terminations} termination${summary.terminations !== 1 ? "s" : ""}`,
+      summary.studentWarnings > 0 && `${summary.studentWarnings} student warning${summary.studentWarnings !== 1 ? "s" : ""}`,
+      summary.honorRollEntries > 0 && `${summary.honorRollEntries} honor roll entr${summary.honorRollEntries !== 1 ? "ies" : "y"}`,
+      summary.warningRemovals > 0 && `${summary.warningRemovals} warning${summary.warningRemovals !== 1 ? "s" : ""} cleared by honor roll`,
+      summary.studentSuspensions > 0 && `${summary.studentSuspensions} student suspension${summary.studentSuspensions !== 1 ? "s" : ""}`,
+      summary.instructorWarnings > 0 && `${summary.instructorWarnings} instructor warning${summary.instructorWarnings !== 1 ? "s" : ""}`,
+      summary.instructorSuspensions > 0 && `${summary.instructorSuspensions} instructor suspension${summary.instructorSuspensions !== 1 ? "s" : ""}`,
+    ].filter(Boolean) as string[];
+    return {
+      success: true,
+      ok: parts.length > 0 ? `Semester completed. ${parts.join(", ")}.` : "Semester completed.",
+    };
+  }
+
   return { success: true };
 }
 

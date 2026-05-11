@@ -45,6 +45,11 @@ export default function SemesterActionButton({
       {state.error && (
         <p className="text-[10px] font-bold text-red-600">{state.error}</p>
       )}
+      {state.ok && (
+        <p className="max-w-xs text-right text-[10px] font-bold text-emerald-700">
+          {state.ok}
+        </p>
+      )}
     </form>
   );
 }
