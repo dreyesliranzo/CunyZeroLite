@@ -79,14 +79,24 @@ export default async function InstructorDashboard() {
       <main className="mx-auto max-w-7xl px-8 py-10">
         {/* Welcome */}
         <div className="mb-8 rounded-2xl bg-gradient-to-r from-[#0f172a] to-[#0f3025] p-8 text-white shadow-xl">
-          <h2 className="text-3xl font-black tracking-tight">
-            Welcome, Prof. {user.lastName}
-          </h2>
-          <p className="mt-2 text-sm text-emerald-200 font-medium">
-            {currentSemester
-              ? `${currentSemester.name} — ${currentSemester.period.replace("_", " ")}`
-              : "No active semester"}
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-3xl font-black tracking-tight">
+                Welcome, Prof. {user.lastName}
+              </h2>
+              <p className="mt-2 text-sm text-emerald-200 font-medium">
+                {currentSemester
+                  ? `${currentSemester.name} — ${currentSemester.period.replace("_", " ")}`
+                  : "No active semester"}
+              </p>
+            </div>
+            <Link
+              href="/instructor/grades"
+              className="rounded-xl bg-white/10 px-5 py-3 text-xs font-black uppercase tracking-widest text-white hover:bg-white/20 backdrop-blur"
+            >
+              Submit Grades
+            </Link>
+          </div>
         </div>
 
         {/* Stats */}
