@@ -21,5 +21,11 @@ export async function POST(req: Request) {
   // Refresh session
   await createSession(session.userId);
 
-  return NextResponse.json({ success: true, redirect: "/dashboard" });
+  // Send brand-new students through the tutorial first (spec: "a new
+  // student will be given a tutorial on how to use the system"). Other
+  // roles go straight to their dashboard router.
+  const redirect =
+    session.role === "STUDENT" ? "/student/tutorial?step=1" : "/dashboard";
+
+  return NextResponse.json({ success: true, redirect });
 }
