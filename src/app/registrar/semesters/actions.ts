@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "@/src/lib/db";
 import { getSession } from "@/src/lib/session";
 import type { ActionResult, Period } from "./periods";
+import { evaluateRunningPeriod } from "./runningRules";
 import { evaluateGradingPeriod } from "./gradingEvaluation";
 
 const NEXT_PERIOD: Record<Period, Period | null> = {
@@ -28,6 +29,10 @@ function getSemesterId(formData: FormData): number | null {
   return Number.isFinite(id) && id > 0 ? id : null;
 }
 
+type AdvanceSummary =
+  | { kind: "running"; data: Awaited<ReturnType<typeof evaluateRunningPeriod>> }
+  | { kind: "grading"; data: Awaited<ReturnType<typeof evaluateGradingPeriod>> };
+
 export async function advancePeriod(formData: FormData): Promise<ActionResult> {
   const denied = await requireRegistrar();
   if (denied) return denied;
@@ -43,9 +48,10 @@ export async function advancePeriod(formData: FormData): Promise<ActionResult> {
     return { success: false, error: "Semester is already completed." };
   }
 
-  // Wrap the period flip + UC-9 academic evaluation in one transaction so
-  // the period and the downstream effects either all land or all roll back.
-  const summary = await prisma.$transaction(async (tx) => {
+  // Wrap the period flip + UC-17 (RUNNING) and UC-4/UC-9 (COMPLETED)
+  // enforcement in one transaction so the period and downstream effects
+  // either all land or all roll back.
+  const summary = await prisma.$transaction(async (tx): Promise<AdvanceSummary | null> => {
     await tx.semester.update({
       where: { id },
       data: {
@@ -53,8 +59,11 @@ export async function advancePeriod(formData: FormData): Promise<ActionResult> {
         ...(next === "COMPLETED" ? { isCurrent: false } : {}),
       },
     });
+    if (next === "RUNNING") {
+      return { kind: "running", data: await evaluateRunningPeriod(tx, id) };
+    }
     if (next === "COMPLETED") {
-      return evaluateGradingPeriod(tx, id);
+      return { kind: "grading", data: await evaluateGradingPeriod(tx, id) };
     }
     return null;
   });
@@ -63,16 +72,31 @@ export async function advancePeriod(formData: FormData): Promise<ActionResult> {
   revalidatePath("/registrar/dashboard");
   revalidatePath("/registrar/courses");
 
-  if (summary) {
+  if (summary?.kind === "running") {
+    const s = summary.data;
     const parts = [
-      summary.studentsGraded > 0 && `${summary.studentsGraded} student${summary.studentsGraded !== 1 ? "s" : ""} evaluated`,
-      summary.terminations > 0 && `${summary.terminations} termination${summary.terminations !== 1 ? "s" : ""}`,
-      summary.studentWarnings > 0 && `${summary.studentWarnings} student warning${summary.studentWarnings !== 1 ? "s" : ""}`,
-      summary.honorRollEntries > 0 && `${summary.honorRollEntries} honor roll entr${summary.honorRollEntries !== 1 ? "ies" : "y"}`,
-      summary.warningRemovals > 0 && `${summary.warningRemovals} warning${summary.warningRemovals !== 1 ? "s" : ""} cleared by honor roll`,
-      summary.studentSuspensions > 0 && `${summary.studentSuspensions} student suspension${summary.studentSuspensions !== 1 ? "s" : ""}`,
-      summary.instructorWarnings > 0 && `${summary.instructorWarnings} instructor warning${summary.instructorWarnings !== 1 ? "s" : ""}`,
-      summary.instructorSuspensions > 0 && `${summary.instructorSuspensions} instructor suspension${summary.instructorSuspensions !== 1 ? "s" : ""}`,
+      s.cancelledCourses > 0 && `${s.cancelledCourses} course${s.cancelledCourses !== 1 ? "s" : ""} cancelled`,
+      s.warnedInstructors > 0 && `${s.warnedInstructors} instructor warning${s.warnedInstructors !== 1 ? "s" : ""}`,
+      s.suspendedInstructors > 0 && `${s.suspendedInstructors} instructor${s.suspendedInstructors !== 1 ? "s" : ""} suspended`,
+      s.warnedStudents > 0 && `${s.warnedStudents} student warning${s.warnedStudents !== 1 ? "s" : ""}`,
+    ].filter(Boolean) as string[];
+    return {
+      success: true,
+      ok: parts.length > 0 ? `Now RUNNING. ${parts.join(", ")}.` : "Now RUNNING. No changes triggered.",
+    };
+  }
+
+  if (summary?.kind === "grading") {
+    const s = summary.data;
+    const parts = [
+      s.studentsGraded > 0 && `${s.studentsGraded} student${s.studentsGraded !== 1 ? "s" : ""} evaluated`,
+      s.terminations > 0 && `${s.terminations} termination${s.terminations !== 1 ? "s" : ""}`,
+      s.studentWarnings > 0 && `${s.studentWarnings} student warning${s.studentWarnings !== 1 ? "s" : ""}`,
+      s.honorRollEntries > 0 && `${s.honorRollEntries} honor roll entr${s.honorRollEntries !== 1 ? "ies" : "y"}`,
+      s.warningRemovals > 0 && `${s.warningRemovals} warning${s.warningRemovals !== 1 ? "s" : ""} cleared by honor roll`,
+      s.studentSuspensions > 0 && `${s.studentSuspensions} student suspension${s.studentSuspensions !== 1 ? "s" : ""}`,
+      s.instructorWarnings > 0 && `${s.instructorWarnings} instructor warning${s.instructorWarnings !== 1 ? "s" : ""}`,
+      s.instructorSuspensions > 0 && `${s.instructorSuspensions} instructor suspension${s.instructorSuspensions !== 1 ? "s" : ""}`,
     ].filter(Boolean) as string[];
     return {
       success: true,
