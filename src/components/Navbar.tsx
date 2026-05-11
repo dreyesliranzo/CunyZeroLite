@@ -25,6 +25,7 @@ export default function Navbar() {
         <nav className="hidden items-center gap-10 md:flex">
           <Link href="/" className="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Home</Link>
           <Link href="/login" className="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Catalog</Link>
+          <Link href="/apply" className="text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-white transition-colors">Apply</Link>
           <Link href="/login" className="group flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-xs font-black uppercase text-blue-950 transition-all hover:scale-[1.02] shadow-lg">
             Student Login <ChevronRight size={14} className="transition-transform group-hover:translate-x-1" />
           </Link>
@@ -47,6 +48,7 @@ export default function Navbar() {
           >
             <Link href="/" onClick={() => setIsOpen(false)} className="text-sm font-bold uppercase tracking-widest">Home</Link>
             <Link href="/login" onClick={() => setIsOpen(false)} className="text-sm font-bold uppercase tracking-widest">Catalog</Link>
+            <Link href="/apply" onClick={() => setIsOpen(false)} className="text-sm font-bold uppercase tracking-widest">Apply</Link>
             <Link href="/login" onClick={() => setIsOpen(false)} className="rounded-xl bg-blue-600 px-6 py-4 text-center text-xs font-black uppercase tracking-widest text-white shadow-lg">
               Student Login
             </Link>
