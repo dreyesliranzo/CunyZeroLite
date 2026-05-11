@@ -11,7 +11,10 @@ import {
   UserCheck, 
   ArrowRight,
   Monitor,
-  ShieldCheck
+  ShieldCheck,
+  Trophy,
+  TrendingDown,
+  Star,
 } from "lucide-react";
 
 export const metadata = {
@@ -24,6 +27,54 @@ export default async function HomePage() {
   });
 
   const registrationOpen = currentSemester?.period === "REGISTRATION";
+
+
+  const coursesWithReviews = await prisma.course.findMany({
+    where: { cancelled: false },
+    include: {
+      reviews: { where: { hidden: false } },
+      instructor: { select: { firstName: true, lastName: true } },
+    },
+  });
+
+  const ratedCourses = coursesWithReviews
+    .filter((c) => c.reviews.length > 0)
+    .map((c) => ({
+      id: c.id,
+      code: c.code,
+      name: c.name,
+      instructor: c.instructor
+        ? `${c.instructor.firstName} ${c.instructor.lastName}`
+        : "TBA",
+      reviewCount: c.reviews.length,
+      avgRating:
+        c.reviews.reduce((sum, r) => sum + r.rating, 0) / c.reviews.length,
+    }));
+
+  const topRatedCourses = [...ratedCourses]
+    .sort((a, b) => b.avgRating - a.avgRating)
+    .slice(0, 5);
+
+  const worstRatedCourses = [...ratedCourses]
+    .sort((a, b) => a.avgRating - b.avgRating)
+    .slice(0, 5);
+
+  const topStudents = await prisma.user.findMany({
+    where: {
+      role: "STUDENT",
+      suspended: false,
+      terminated: false,
+      graduated: false,
+    },
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      gpa: true,
+    },
+    orderBy: { gpa: "desc" },
+    take: 5,
+  });
 
   return (
     <main className="min-h-screen bg-[#e2e8f0] text-[#0f172a] font-sans selection:bg-blue-100 relative overflow-x-hidden">
@@ -187,7 +238,124 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* 6. Student Success Section (NEW) */}
+      {/* 6. Academic Highlights — Homepage Stats */}
+      <section className="relative z-10 py-32 px-8 bg-white border-y border-slate-300">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16">
+            <p className="mb-4 text-xs font-black uppercase tracking-[0.4em] text-blue-700">Campus Pulse</p>
+            <h2 className="text-4xl font-black tracking-tighter text-slate-900 leading-none">Academic Highlights</h2>
+            <p className="mt-4 text-slate-500 font-medium max-w-2xl">A live look at how courses and students are performing across the portal.</p>
+          </div>
+
+          <div className="grid gap-8 lg:grid-cols-3">
+            {/* Top Rated Classes */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              className="rounded-[2rem] border border-slate-300 bg-white p-10 shadow-sm border-b-4 border-b-emerald-600">
+              <div className="mb-8 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                  <Trophy size={22} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Top Rated</p>
+                  <h4 className="text-lg font-black tracking-tight text-slate-900">Highest Rated Classes</h4>
+                </div>
+              </div>
+
+              {topRatedCourses.length === 0 ? (
+                <p className="text-sm text-slate-400 font-medium italic">No reviews submitted yet.</p>
+              ) : (
+                <ol className="space-y-4">
+                  {topRatedCourses.map((course, i) => (
+                    <li key={course.id} className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3 last:border-0">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <span className="text-xs font-black tracking-widest text-slate-300 w-5">{i + 1}</span>
+                        <div className="min-w-0">
+                          <p className="text-sm font-black tracking-tight text-slate-900 truncate">{course.code}</p>
+                          <p className="text-[11px] text-slate-500 font-medium truncate">{course.name}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-black text-emerald-700 whitespace-nowrap">
+                        {course.avgRating.toFixed(1)} ★
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </motion.div>
+
+            {/* Worst Rated Classes */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
+              className="rounded-[2rem] border border-slate-300 bg-white p-10 shadow-sm border-b-4 border-b-rose-600">
+              <div className="mb-8 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-700">
+                  <TrendingDown size={22} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Lowest Rated</p>
+                  <h4 className="text-lg font-black tracking-tight text-slate-900">Needs Improvement</h4>
+                </div>
+              </div>
+
+              {worstRatedCourses.length === 0 ? (
+                <p className="text-sm text-slate-400 font-medium italic">No reviews submitted yet.</p>
+              ) : (
+                <ol className="space-y-4">
+                  {worstRatedCourses.map((course, i) => (
+                    <li key={course.id} className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3 last:border-0">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <span className="text-xs font-black tracking-widest text-slate-300 w-5">{i + 1}</span>
+                        <div className="min-w-0">
+                          <p className="text-sm font-black tracking-tight text-slate-900 truncate">{course.code}</p>
+                          <p className="text-[11px] text-slate-500 font-medium truncate">{course.name}</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-black text-rose-700 whitespace-nowrap">
+                        {course.avgRating.toFixed(1)} ★
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </motion.div>
+
+            {/* Top GPA Students */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2 }}
+              className="rounded-[2rem] border border-slate-300 bg-white p-10 shadow-sm border-b-4 border-b-blue-600">
+              <div className="mb-8 flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+                  <Star size={22} />
+                </div>
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Honor Roll</p>
+                  <h4 className="text-lg font-black tracking-tight text-slate-900">Highest GPA Students</h4>
+                </div>
+              </div>
+
+              {topStudents.length === 0 ? (
+                <p className="text-sm text-slate-400 font-medium italic">No active students yet.</p>
+              ) : (
+                <ol className="space-y-4">
+                  {topStudents.map((student, i) => (
+                    <li key={student.id} className="flex items-center justify-between gap-4 border-b border-slate-100 pb-3 last:border-0">
+                      <div className="flex items-center gap-4 min-w-0">
+                        <span className="text-xs font-black tracking-widest text-slate-300 w-5">{i + 1}</span>
+                        <p className="text-sm font-black tracking-tight text-slate-900 truncate">
+                          {student.firstName} {student.lastName}
+                        </p>
+                      </div>
+                      <span className="text-sm font-black text-blue-700 whitespace-nowrap">
+                        {student.gpa.toFixed(2)}
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+              )}
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. Student Success Section (NEW) */}
       <section className="relative z-10 py-32 px-8 bg-white overflow-hidden">
         <div className="mx-auto max-w-7xl grid lg:grid-cols-[0.9fr_1.1fr] gap-20 items-center">
           <div className="order-2 lg:order-1">
