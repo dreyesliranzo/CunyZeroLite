@@ -13,6 +13,8 @@ import {
   ClipboardList,
   MessageSquare,
   Award,
+  Calendar,
+  Compass,
 } from "lucide-react";
 
 export default async function StudentDashboard() {
@@ -281,7 +283,14 @@ export default async function StudentDashboard() {
                   Write Reviews
                 </Link>
                 <Link
-                  href="/student/complaints"
+                  href="/student/calendar"
+                  className="flex items-center gap-3 rounded-xl p-3 text-sm font-bold text-[#0f172a] hover:bg-slate-50 transition-colors"
+                >
+                  <Calendar size={18} className="text-blue-600" />
+                  Weekly Schedule
+                </Link>
+                <Link
+                  href="/complaints/new"
                   className="flex items-center gap-3 rounded-xl p-3 text-sm font-bold text-[#0f172a] hover:bg-slate-50 transition-colors"
                 >
                   <AlertTriangle size={18} className="text-blue-600" />
@@ -293,6 +302,13 @@ export default async function StudentDashboard() {
                 >
                   <GraduationCap size={18} className="text-blue-600" />
                   Apply for Graduation
+                </Link>
+                <Link
+                  href="/student/tutorial"
+                  className="flex items-center gap-3 rounded-xl p-3 text-sm font-bold text-[#0f172a] hover:bg-slate-50 transition-colors"
+                >
+                  <Compass size={18} className="text-blue-600" />
+                  Tutorial
                 </Link>
               </div>
             </div>
