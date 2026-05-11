@@ -11,6 +11,8 @@ import {
   Star,
   ClipboardList,
   User,
+  Clock,
+  FileWarning,
 } from "lucide-react";
 
 export default async function InstructorDashboard() {
@@ -78,7 +80,7 @@ export default async function InstructorDashboard() {
 
       <main className="mx-auto max-w-7xl px-8 py-10">
         {/* Welcome */}
-        <div className="mb-8 rounded-2xl bg-gradient-to-r from-[#0f172a] to-[#0f3025] p-8 text-white shadow-xl">
+        <div className="mb-6 rounded-2xl bg-gradient-to-r from-[#0f172a] to-[#0f3025] p-8 text-white shadow-xl">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-3xl font-black tracking-tight">
@@ -90,12 +92,20 @@ export default async function InstructorDashboard() {
                   : "No active semester"}
               </p>
             </div>
-            <Link
-              href="/instructor/grades"
-              className="rounded-xl bg-white/10 px-5 py-3 text-xs font-black uppercase tracking-widest text-white hover:bg-white/20 backdrop-blur"
-            >
-              Submit Grades
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/instructor/grades"
+                className="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-xs font-black uppercase tracking-widest text-white hover:bg-white/20 backdrop-blur"
+              >
+                <ClipboardList size={14} /> Submit Grades
+              </Link>
+              <Link
+                href="/complaints/new"
+                className="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-xs font-black uppercase tracking-widest text-white hover:bg-white/20 backdrop-blur"
+              >
+                <FileWarning size={14} /> Complaint
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -203,6 +213,20 @@ export default async function InstructorDashboard() {
                           {course.cancelled ? "Cancelled" : "Active"}
                         </span>
                       </div>
+                    </div>
+                    <div className="mt-4 flex items-center gap-2">
+                      <Link
+                        href={`/instructor/grades/${course.id}`}
+                        className="flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/20"
+                      >
+                        <ClipboardList size={11} /> Grade
+                      </Link>
+                      <Link
+                        href={`/instructor/courses/${course.id}/waitlist`}
+                        className="flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-white hover:bg-white/20"
+                      >
+                        <Clock size={11} /> Waitlist
+                      </Link>
                     </div>
                   </div>
 
