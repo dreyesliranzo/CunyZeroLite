@@ -7,14 +7,23 @@ interface Message {
   content: string;
 }
 
+const PUBLIC_GREETING =
+  "Hi! I'm Lite, your college assistant. Ask me anything about admissions, registration, policies, or how to get started.";
+
+const ROLE_GREETINGS: Record<string, (firstName: string) => string> = {
+  STUDENT: (n) =>
+    `Hi ${n}! I can help with your courses, grades, GPA, graduation eligibility, or any college policy. Try "what classes am I taking?" or "am I close to graduating?"`,
+  INSTRUCTOR: (n) =>
+    `Hi Prof. ${n}! I can answer about your courses, enrollment counts, ratings, or general college policy. Try "what am I teaching this semester?" or "what are my course ratings?"`,
+  REGISTRAR: () =>
+    `Welcome back. I can summarize your queues (pending applications, complaints, graduation requests), the current semester state, or any policy. Try "what's in my queue?"`,
+};
+
 export default function HomeChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [chatType, setChatType] = useState<"home" | "portal">("home");
   const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content:
-        "Hi! I'm Lite, your college assistant. Ask me anything about admissions, registration, policies, or how to get started.",
-    },
+    { role: "assistant", content: PUBLIC_GREETING },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -23,6 +32,28 @@ export default function HomeChatWidget() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    const open = () => setIsOpen(true);
+    window.addEventListener("chat:open", open);
+    return () => window.removeEventListener("chat:open", open);
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/session")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (cancelled || !data?.authenticated) return;
+        setChatType("portal");
+        const greet = ROLE_GREETINGS[data.role];
+        if (greet) setMessages([{ role: "assistant", content: greet(data.firstName) }]);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function handleSend() {
     const trimmed = input.trim();
@@ -37,7 +68,7 @@ export default function HomeChatWidget() {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: trimmed, chatType: "home" }),
+        body: JSON.stringify({ message: trimmed, chatType }),
       });
 
       const data = await res.json();

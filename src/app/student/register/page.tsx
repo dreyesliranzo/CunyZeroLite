@@ -39,7 +39,7 @@ export default async function RegisterPage() {
         fineOwed: true,
         enrollments: {
           where: { course: { semester: { isCurrent: true } } },
-          select: { id: true, courseId: true },
+          select: { id: true, courseId: true, status: true, course: { select: { code: true } } },
         },
         waitlists: {
           where: { course: { semester: { isCurrent: true } } },
@@ -51,14 +51,19 @@ export default async function RegisterPage() {
 
   if (!user) redirect("/login");
 
-  const enrolledMap = new Map(user.enrollments.map((e) => [e.courseId, e.id]));
+  const activeEnrollments = user.enrollments.filter((e) => e.status !== "CANCELLED");
+  const cancelledEnrollments = user.enrollments.filter((e) => e.status === "CANCELLED");
+  const enrolledMap = new Map(activeEnrollments.map((e) => [e.courseId, e.id]));
   const waitlistMap = new Map(
     user.waitlists
       .filter((w) => w.status === "WAITING")
       .map((w) => [w.courseId, { id: w.id, position: w.position }]),
   );
-  const enrolledCount = user.enrollments.length;
+  const enrolledCount = activeEnrollments.length;
   const registrationOpen = currentSemester?.period === "REGISTRATION";
+  const specialReregistration =
+    currentSemester?.period === "RUNNING" && cancelledEnrollments.length > 0;
+  const canRegister = (registrationOpen || specialReregistration);
   const blocked = user.suspended || user.terminated;
 
   return (
@@ -105,7 +110,22 @@ export default async function RegisterPage() {
           </div>
         </div>
 
-        {!registrationOpen && (
+        {specialReregistration && !blocked && (
+          <div className="mb-4 rounded-lg bg-indigo-50 border border-indigo-300 px-4 py-3">
+            <div className="flex items-start gap-2 text-xs font-bold text-indigo-900">
+              <AlertTriangle size={14} className="mt-0.5 flex-shrink-0" />
+              <div>
+                <p>Special re-registration period open.</p>
+                <p className="mt-1 font-medium">
+                  Your course{cancelledEnrollments.length !== 1 ? "s" : ""}{" "}
+                  {cancelledEnrollments.map((e) => e.course.code).join(", ")} {cancelledEnrollments.length !== 1 ? "were" : "was"} cancelled. You may pick replacement{cancelledEnrollments.length !== 1 ? "s" : ""} now.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!canRegister && (
           <div className="mb-4 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-4 py-3 text-xs font-bold text-amber-800">
             <AlertTriangle size={14} />
             Registration is closed for this semester. You can view courses but
@@ -200,7 +220,7 @@ export default async function RegisterPage() {
                         <CourseRow
                           courseId={c.id}
                           status={status}
-                          registrationOpen={!!registrationOpen && !blocked}
+                          registrationOpen={!!canRegister && !blocked}
                         />
                       </div>
                     </td>

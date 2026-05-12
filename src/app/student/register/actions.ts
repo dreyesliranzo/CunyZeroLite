@@ -39,6 +39,7 @@ export async function registerForCourse(
           select: {
             id: true,
             courseId: true,
+            status: true,
             course: {
               select: { id: true, code: true, name: true, schedule: true },
             },
@@ -59,6 +60,11 @@ export async function registerForCourse(
   if (!user) return { success: false, error: "User not found." };
   if (!course) return { success: false, error: "Course not found." };
 
+  // Active = not displaced by a cancelled course. Cancelled enrollments
+  // open the UC-17 special re-registration window during RUNNING.
+  const activeEnrollments = user.enrollments.filter((e) => e.status !== "CANCELLED");
+  const cancelledEnrollments = user.enrollments.filter((e) => e.status === "CANCELLED");
+
   if (user.terminated) {
     return { success: false, error: "Your account is terminated." };
   }
@@ -74,17 +80,20 @@ export async function registerForCourse(
   if (!course.semester.isCurrent) {
     return { success: false, error: "Course is not in the current semester." };
   }
-  if (course.semester.period !== "REGISTRATION") {
+  const inRegularRegistration = course.semester.period === "REGISTRATION";
+  const inSpecialReregistration =
+    course.semester.period === "RUNNING" && cancelledEnrollments.length > 0;
+  if (!inRegularRegistration && !inSpecialReregistration) {
     return {
       success: false,
       error: `Registration is closed (semester period: ${course.semester.period}).`,
     };
   }
 
-  if (user.enrollments.some((e) => e.courseId === course.id)) {
+  if (activeEnrollments.some((e) => e.courseId === course.id)) {
     return { success: false, error: "Already enrolled in this course." };
   }
-  if (user.enrollments.length >= MAX_COURSES) {
+  if (activeEnrollments.length >= MAX_COURSES) {
     return { success: false, error: `Already at max ${MAX_COURSES} courses.` };
   }
 
@@ -105,7 +114,7 @@ export async function registerForCourse(
 
   const conflict = findConflict(
     course.schedule,
-    user.enrollments.map((e) => ({
+    activeEnrollments.map((e) => ({
       id: e.course.id,
       code: e.course.code,
       name: e.course.name,

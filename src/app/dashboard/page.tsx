@@ -29,18 +29,18 @@ type CardInfo = {
 const studentCards: CardInfo[] = [
   { title: "Profile", href: "/student/profile", icon: <User size={36} className="text-blue-700" />, subtitle: "View Your Records" },
   { title: "Course Registration", href: "/student/register", icon: <ClipboardList size={36} className="text-blue-700" />, subtitle: "Register for Courses" },
-  { title: "Schedule Builder", href: "/schedule_builder", icon: <Calendar size={36} className="text-blue-700" />, subtitle: "Plan Your Classes" },
+  { title: "Weekly Schedule", href: "/student/calendar", icon: <Calendar size={36} className="text-blue-700" />, subtitle: "Visualize Your Week" },
   { title: "Grades & Transcript", href: "/grades_transcript", icon: <GraduationCap size={36} className="text-blue-700" />, subtitle: "View Your Grades" },
   { title: "Course Reviews", href: "/student/reviews", icon: <Star size={36} className="text-blue-700" />, subtitle: "Rate Your Classes" },
-  { title: "File Complaint", href: "/student/complaints", icon: <MessageSquare size={36} className="text-blue-700" />, subtitle: "Report an Issue" },
+  { title: "File Complaint", href: "/complaints/new", icon: <MessageSquare size={36} className="text-blue-700" />, subtitle: "Report an Issue" },
+  { title: "Apply to Graduate", href: "/student/graduation", icon: <GraduationCap size={36} className="text-blue-700" />, subtitle: "Submit a Request" },
 ];
 
 const instructorCards: CardInfo[] = [
   { title: "Profile", href: "/instructor/profile", icon: <User size={36} className="text-emerald-700" />, subtitle: "View Your Info" },
   { title: "My Courses", href: "/instructor/courses", icon: <BookOpen size={36} className="text-emerald-700" />, subtitle: "Manage Your Classes" },
-  { title: "Grade Students", href: "/instructor/grading", icon: <ClipboardList size={36} className="text-emerald-700" />, subtitle: "Assign Grades" },
-  { title: "My Students", href: "/instructor/students", icon: <Users size={36} className="text-emerald-700" />, subtitle: "View Class Rosters" },
-  { title: "File Complaint", href: "/instructor/complaints", icon: <MessageSquare size={36} className="text-emerald-700" />, subtitle: "Report a Student" },
+  { title: "Grade Students", href: "/instructor/grades", icon: <ClipboardList size={36} className="text-emerald-700" />, subtitle: "Assign Grades" },
+  { title: "File Complaint", href: "/complaints/new", icon: <MessageSquare size={36} className="text-emerald-700" />, subtitle: "Report a Student" },
 ];
 
 const registrarCards: CardInfo[] = [

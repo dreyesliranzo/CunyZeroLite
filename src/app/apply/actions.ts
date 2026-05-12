@@ -9,6 +9,10 @@ function makeEmail(firstName: string, lastName: string) {
   return `${cleanFirst[0] ?? ""}${cleanLast}00@cuny.edu`;
 }
 
+function makeTempPassword() {
+  return Math.random().toString(36).slice(2, 10);
+}
+
 export async function submitApplication(
   formData: FormData,
 ): Promise<ActionResult> {
@@ -62,6 +66,59 @@ export async function submitApplication(
     return {
       success: false,
       error: "A pending application already exists for this email.",
+    };
+  }
+
+  // Spec rule: STUDENT applications with GPA > 3.0 should be auto-accepted
+  // when the program quota is not full. INSTRUCTOR applications still need
+  // manual review by the registrar.
+  let autoAccepted = false;
+  let createdUser: { email: string; tempPassword: string } | null = null;
+
+  if (type === "STUDENT" && priorGpa !== null && priorGpa > 3.0) {
+    const currentSemester = await prisma.semester.findFirst({
+      where: { isCurrent: true },
+      select: { programQuota: true },
+    });
+    const activeStudents = await prisma.user.count({
+      where: { role: "STUDENT", terminated: false, graduated: false },
+    });
+    const quota = currentSemester?.programQuota ?? 50;
+    if (activeStudents < quota) {
+      autoAccepted = true;
+    }
+  }
+
+  if (autoAccepted) {
+    const tempPassword = makeTempPassword();
+    const user = await prisma.user.create({
+      data: {
+        email: generatedEmail,
+        username: generatedEmail,
+        password: tempPassword,
+        firstName,
+        lastName,
+        role: "STUDENT",
+        gpa: priorGpa ?? 0,
+        mustChangePassword: true,
+      },
+    });
+    await prisma.application.create({
+      data: {
+        type,
+        status: "ACCEPTED",
+        firstName,
+        lastName,
+        email: emailRaw,
+        priorGpa,
+        justification: justification || null,
+        userId: user.id,
+      },
+    });
+    createdUser = { email: generatedEmail, tempPassword };
+    return {
+      success: true,
+      ok: `Application auto-approved (GPA ${priorGpa!.toFixed(2)} > 3.0). Your login email is ${createdUser.email} and temporary password is ${createdUser.tempPassword}. You will be asked to change it on first sign-in.`,
     };
   }
 

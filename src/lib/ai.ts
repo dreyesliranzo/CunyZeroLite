@@ -133,6 +133,7 @@ async function searchPolicies(query: string): Promise<SearchResult> {
 export async function getAIResponse(
   message: string,
   chatType: "home" | "portal",
+  userContext?: string,
 ): Promise<string> {
   const result = await searchPolicies(message);
   const isLowConfidence =
@@ -147,9 +148,13 @@ export async function getAIResponse(
   const audiencePrompt =
     chatType === "home"
       ? "You are on the public home page. Help visitors and prospective students with general questions about the college, admissions, policies, and how to get started."
-      : "You are inside the student portal. Help logged-in users understand academic policies, what grades mean, how registration works, how to navigate the system, and answer questions about their academic journey.";
+      : "You are inside the student portal helping a logged-in user. Use the user-specific data block below to answer questions about THEIR academic situation, courses, students, or queue. Refer to them by name when natural. Never invent data not present in the user data block.";
 
-  const systemPrompt = `${policies.system_instructions}\n\n${audiencePrompt}\n\nRelevant college knowledge:\n${contextBlock}`;
+  const userBlock = userContext
+    ? `\n\nUser-specific data (current snapshot):\n${userContext}`
+    : "";
+
+  const systemPrompt = `${policies.system_instructions}\n\n${audiencePrompt}\n\nRelevant college knowledge:\n${contextBlock}${userBlock}`;
 
   let reply: string;
   try {

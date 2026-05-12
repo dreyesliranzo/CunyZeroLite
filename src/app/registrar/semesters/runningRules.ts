@@ -10,6 +10,7 @@ export type RunningEvaluation = {
   warnedInstructors: number;
   suspendedInstructors: number;
   warnedStudents: number;
+  displacedStudents: number;
 };
 
 /**
@@ -48,11 +49,26 @@ export async function evaluateRunningPeriod(
   );
   const cancelIds = toCancel.map((c) => c.id);
 
+  let displacedStudents = 0;
   if (cancelIds.length > 0) {
     await tx.course.updateMany({
       where: { id: { in: cancelIds } },
       data: { cancelled: true },
     });
+    // Mark affected enrollments as CANCELLED so they no longer count
+    // as active and the student is eligible for the special
+    // re-registration window during RUNNING (UC-17 spec).
+    const affected = await tx.enrollment.findMany({
+      where: { courseId: { in: cancelIds }, status: "ENROLLED" },
+      select: { userId: true },
+    });
+    if (affected.length > 0) {
+      await tx.enrollment.updateMany({
+        where: { courseId: { in: cancelIds }, status: "ENROLLED" },
+        data: { status: "CANCELLED" },
+      });
+      displacedStudents = new Set(affected.map((a) => a.userId)).size;
+    }
   }
 
   // 3. Warn instructors of cancelled courses (skip nulls / dupes)
@@ -146,5 +162,6 @@ export async function evaluateRunningPeriod(
     warnedInstructors: instructorWarnings.length,
     suspendedInstructors: suspendIds.length,
     warnedStudents: studentsToWarn.length,
+    displacedStudents,
   };
 }

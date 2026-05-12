@@ -286,7 +286,7 @@ export default async function StudentProfile() {
                   Write Reviews
                 </Link>
                 <Link
-                  href="/student/complaints"
+                  href="/complaints/new"
                   className="flex items-center gap-3 rounded-xl p-3 text-sm font-bold text-[#0f172a] hover:bg-slate-50 transition-colors"
                 >
                   <AlertTriangle size={18} className="text-blue-600" />
