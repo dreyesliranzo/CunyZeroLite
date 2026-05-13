@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import HomeChatWidget from "@/src/components/HomeChatWidget";
 
 export const metadata: Metadata = {
   // 1. The Title (Template ensures sub-pages look consistent)
@@ -38,7 +39,10 @@ export default function RootLayout({
         {/* Theme color for mobile browser bars */}
         <meta name="theme-color" content="#0f172a" />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <HomeChatWidget />
+      </body>
     </html>
   );
 }

@@ -136,11 +136,7 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-2">
-                  <Link href="/forgot" className="text-[10px] font-black uppercase tracking-widest text-blue-700 hover:text-blue-900">Forgot Credentials?</Link>
-                </div>
-
-                <button 
+                <button
                   type="submit"
                   disabled={isLoading} 
                   className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-blue-600 py-5 text-xs font-black uppercase tracking-[0.2em] text-white shadow-xl shadow-blue-600/20 hover:bg-blue-500 hover:-translate-y-1 active:translate-y-0 transition-all disabled:opacity-70 disabled:translate-y-0"
@@ -157,7 +153,7 @@ export default function LoginPage() {
               </form>
 
               <div className="mt-10 pt-8 border-t border-slate-100 text-center">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Technical Issue? <Link href="/support" className="text-blue-700">Contact Support</Link></p>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">No account? <Link href="/apply" className="text-blue-700">Apply for Admission</Link></p>
               </div>
             </div>
           </div>

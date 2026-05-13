@@ -135,14 +135,18 @@ model Warning {
 }
 
 model Application {
-  id            Int       @id @default(autoincrement())
-  type          String
-  status        String    @default("PENDING")
-  priorGpa      Float?
-  justification String?
-  createdAt     DateTime  @default(now())
-  userId        Int
-  user          User      @relation(fields: [userId], references: [id])
+  id              Int       @id @default(autoincrement())
+  type            String    // STUDENT | INSTRUCTOR
+  status          String    @default("PENDING") // PENDING | ACCEPTED | REJECTED
+  firstName       String
+  lastName        String
+  email           String
+  priorGpa        Float?
+  justification   String?
+  rejectionReason String?
+  createdAt       DateTime  @default(now())
+  userId          Int?
+  user            User?     @relation(fields: [userId], references: [id])
 }
 
 model GraduationRequest {
