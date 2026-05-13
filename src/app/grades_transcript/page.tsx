@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, GraduationCap } from "lucide-react";
+import { ArrowLeft, GraduationCap, Calculator } from "lucide-react";
 import { getSession } from "@/src/lib/session";
 import { prisma } from "@/src/lib/db";
 import LogoutButton from "@/src/components/LogoutButton";
@@ -82,13 +82,24 @@ export default async function GradesTranscriptPage() {
 
       <main className="mx-auto max-w-5xl px-8 py-10 space-y-6">
         <div className="rounded-2xl bg-gradient-to-r from-[#0f172a] to-[#1e3a8a] p-8 text-white shadow-xl">
-          <div className="flex items-center gap-3">
-            <GraduationCap size={28} className="text-blue-300" />
-            <h2 className="text-3xl font-black tracking-tight">Grades & Transcript</h2>
+          <div className="flex items-start justify-between gap-4 flex-wrap">
+            <div>
+              <div className="flex items-center gap-3">
+                <GraduationCap size={28} className="text-blue-300" />
+                <h2 className="text-3xl font-black tracking-tight">Grades & Transcript</h2>
+              </div>
+              <p className="mt-2 text-sm text-blue-200 font-medium">
+                Official record of your academic performance.
+              </p>
+            </div>
+            <Link
+              href="/student/what-if"
+              className="flex items-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 px-5 py-3 text-xs font-black uppercase tracking-widest text-white transition-all hover:-translate-y-0.5 shadow-lg"
+            >
+              <Calculator size={16} />
+              Try What-If Calculator
+            </Link>
           </div>
-          <p className="mt-2 text-sm text-blue-200 font-medium">
-            Official record of your academic performance.
-          </p>
         </div>
 
         <div className="grid grid-cols-4 gap-4">
