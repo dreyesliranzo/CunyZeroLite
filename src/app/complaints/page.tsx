@@ -40,7 +40,7 @@ export default async function MyComplaintsPage() {
   ]);
 
   const dashboard =
-    session.role === "STUDENT" ? "/student/dashboard" : "/instructor/dashboard";
+    session.role === "STUDENT" ? "/dashboard" : "/instructor/dashboard";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-100 to-slate-200 font-sans text-[#0f172a]">

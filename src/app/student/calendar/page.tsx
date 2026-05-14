@@ -90,7 +90,7 @@ export default async function CalendarPage() {
       <nav className="sticky top-0 z-10 bg-[#0f172a] text-white shadow-xl border-b border-white/5">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-5">
           <Link
-            href="/student/dashboard"
+            href="/dashboard"
             className="flex items-center gap-2 text-sm font-bold text-slate-300 hover:text-white"
           >
             <ArrowLeft size={16} /> Back to Dashboard
