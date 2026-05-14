@@ -17,6 +17,7 @@ import {
   MessageSquare,
   Shield,
   Star,
+  Compass,
 } from "lucide-react";
 
 type CardInfo = {
@@ -30,6 +31,8 @@ const studentCards: CardInfo[] = [
   { title: "Profile", href: "/student/profile", icon: <User size={36} className="text-blue-700" />, subtitle: "View Your Records" },
   { title: "Course Registration", href: "/student/register", icon: <ClipboardList size={36} className="text-blue-700" />, subtitle: "Register for Courses" },
   { title: "Weekly Schedule", href: "/student/calendar", icon: <Calendar size={36} className="text-blue-700" />, subtitle: "Visualize Your Week" },
+  { title: "Schedule Builder", href: "/schedule_builder", icon: <Calendar size={36} className="text-blue-700" />, subtitle: "Plan With Conflict Detection" },
+  { title: "Course Planning", href: "/course_planning", icon: <Compass size={36} className="text-blue-700" />, subtitle: "Track Degree Progress" },
   { title: "Grades & Transcript", href: "/grades_transcript", icon: <GraduationCap size={36} className="text-blue-700" />, subtitle: "View Your Grades" },
   { title: "Course Reviews", href: "/student/reviews", icon: <Star size={36} className="text-blue-700" />, subtitle: "Rate Your Classes" },
   { title: "File Complaint", href: "/complaints/new", icon: <MessageSquare size={36} className="text-blue-700" />, subtitle: "Report an Issue" },

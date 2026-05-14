@@ -290,6 +290,20 @@ export default async function StudentDashboard() {
                   Weekly Schedule
                 </Link>
                 <Link
+                  href="/schedule_builder"
+                  className="flex items-center gap-3 rounded-xl p-3 text-sm font-bold text-[#0f172a] hover:bg-slate-50 transition-colors"
+                >
+                  <Calendar size={18} className="text-blue-600" />
+                  Schedule Builder
+                </Link>
+                <Link
+                  href="/course_planning"
+                  className="flex items-center gap-3 rounded-xl p-3 text-sm font-bold text-[#0f172a] hover:bg-slate-50 transition-colors"
+                >
+                  <Compass size={18} className="text-blue-600" />
+                  Course Planning
+                </Link>
+                <Link
                   href="/complaints/new"
                   className="flex items-center gap-3 rounded-xl p-3 text-sm font-bold text-[#0f172a] hover:bg-slate-50 transition-colors"
                 >
