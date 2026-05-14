@@ -18,7 +18,10 @@ export async function loginUser(email: string, password: string) {
     }
 
     if (user.suspended) {
-      return { success: false, error: "Your account is currently suspended." };
+      const msg = user.fineOwed > 0
+        ? `Your account is currently suspended. Please pay your $${user.fineOwed.toFixed(2)} fine at the Bursar's Office to be reinstated by the registrar.`
+        : "Your account is currently suspended. Please contact the registrar to be reinstated.";
+      return { success: false, error: msg };
     }
 
     if (user.fired) {

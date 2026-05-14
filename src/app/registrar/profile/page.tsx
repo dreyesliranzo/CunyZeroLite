@@ -208,12 +208,18 @@ export default async function RegistrarProfile() {
             </div>
 
             {suspendedStudents > 0 && (
-              <div className="mt-4 rounded-2xl bg-red-50 border border-red-200 p-5">
+              <Link
+                href="/registrar/students"
+                className="mt-4 block rounded-2xl bg-red-50 border border-red-200 p-5 hover:bg-red-100 transition-colors"
+              >
                 <p className="text-xs font-black uppercase tracking-widest text-red-500">
                   {suspendedStudents} Suspended Student
                   {suspendedStudents !== 1 ? "s" : ""}
                 </p>
-              </div>
+                <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-red-400">
+                  Click to clear fine &amp; reinstate
+                </p>
+              </Link>
             )}
           </div>
         </div>

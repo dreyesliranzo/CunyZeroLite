@@ -4,6 +4,7 @@ import { ArrowLeft, Users } from "lucide-react";
 import { getSession } from "@/src/lib/session";
 import { prisma } from "@/src/lib/db";
 import LogoutButton from "@/src/components/LogoutButton";
+import ClearFineButton from "./ClearFineButton";
 
 export const metadata = { title: "Student Records" };
 
@@ -89,6 +90,7 @@ export default async function RegistrarStudentsPage() {
                 <th className="px-6 py-3">Warnings</th>
                 <th className="px-6 py-3">Fine</th>
                 <th className="px-6 py-3">Status</th>
+                <th className="px-6 py-3">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -112,6 +114,13 @@ export default async function RegistrarStudentsPage() {
                       <span className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-widest ${status.cls}`}>
                         {status.label}
                       </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {s.suspended && !s.terminated && s.fineOwed > 0 ? (
+                        <ClearFineButton userId={s.id} />
+                      ) : (
+                        <span className="text-[10px] text-slate-400">—</span>
+                      )}
                     </td>
                   </tr>
                 );
